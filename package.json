@@ -1,6 +1,6 @@
 {
   "name": "@discordextend/interpreter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An interpreter for discord-oversimplified",
   "main": "./src/index.js",
   "module": "./src/index.mjs",
