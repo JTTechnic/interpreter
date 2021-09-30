@@ -19,7 +19,7 @@ pnpm add @discordextend/interpreter
 
 ## Links
 * [Discord-Extend Discord Server](https://discord.gg/AQwkmv7kA9)
-* [@jttechnic/interpreter GitHub](https://github.com/discordextend/interpreter)
+* [@discordextend/interpreter GitHub](https://github.com/discordextend/interpreter)
 * [NPM](https://npmjs.org/package/@discordextend/interpreter)
 
 ## Help
