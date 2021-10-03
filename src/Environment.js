@@ -67,10 +67,14 @@ module.exports = class Environment {
 	/**
 	 * @param {string} name - The variable to define
 	 * @param {any} value - The value of the variable
+	 * @param {boolean} final - Wether the variable is a constant
 	 * @returns {any}
 	 */
-	define(name, value) {
-		this.vars[name] = value;
+	define(name, value, final = false) {
+		Object.defineProperty(this.vars, name, {
+			value,
+			writable: !final
+		});
 		return value;
 	}
 };
