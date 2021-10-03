@@ -15,15 +15,7 @@ export enum TokenType {
 	ElseIf = 13
 }
 
-export type TokenTypes = [
-	boolean,
-	string,
-	string,
-	string,
-	string,
-	number,
-	string
-];
+export type TokenTypes = [boolean, string, string, string, string, number, string];
 
 export interface Token<T extends TokenType = TokenType> {
 	type: T;
@@ -74,7 +66,13 @@ export interface PropertyToken {
 	args: any[];
 }
 
-export type ParserToken = Token<TokenType.Boolean | TokenType.String | TokenType.Number> | OperatorToken | CallToken | IfToken | ProgramToken | VariableToken;
+export type ParserToken =
+	| Token<TokenType.Boolean | TokenType.String | TokenType.Number>
+	| OperatorToken
+	| CallToken
+	| IfToken
+	| ProgramToken
+	| VariableToken;
 
 export class Environment {
 	private readonly vars: {
@@ -86,7 +84,7 @@ export class Environment {
 	public lookup(name: string): Environment;
 	public get(name: string): any;
 	public set(name: string, value: any): any;
-	public define(name: string, value: any): any;
+	public define(name: string, value: any, final?: boolean): any;
 }
 
 export const parse: (code: string) => ProgramToken;
