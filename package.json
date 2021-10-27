@@ -1,0 +1,71 @@
+{
+	"name": "@discordextend/interpreter",
+	"version": "1.0.1",
+	"description": "An interpreter for discord-oversimplified",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"typings": "./dist/index.d.ts",
+	"exports": {
+		"import": "./dist/index.mjs",
+		"require": "./dist/index.js"
+	},
+	"directories": {
+		"lib": "src",
+		"test": "__tests__"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"pretest": "npm run build",
+		"test": "jest --pass-with-no-tests",
+		"test:ci": "jest --no-stack-trace --verbose --pass-with-no-tests",
+		"prebuild": "npm run clean",
+		"build": "tsup && tsc --emitDeclarationOnly",
+		"clean": "rimraf dist **/*.tsbuildinfo",
+		"lint": "eslint --ext mjs,js,ts",
+		"lint:fix": "eslint --ext mjs,js,ts --fix",
+		"format": "prettier --write **/*.{ts,js,json,yml,yaml}",
+		"prepare": "husky install"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/discordextend/interpreter.git"
+	},
+	"author": "Jaron Zijlstra",
+	"license": "Apache-2.0",
+	"bugs": {
+		"url": "https://github.com/discordextend/interpreter/issues"
+	},
+	"homepage": "https://github.com/discordextend/interpreter#readme",
+	"dependencies": {
+		"tslib": "^2.3.1"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.15.8",
+		"@babel/plugin-proposal-decorators": "^7.15.8",
+		"@babel/preset-env": "^7.15.8",
+		"@babel/preset-typescript": "^7.15.0",
+		"@commitlint/cli": "^13.2.1",
+		"@commitlint/config-angular": "^13.2.0",
+		"@types/jest": "^27.0.2",
+		"@typescript-eslint/eslint-plugin": "^5.2.0",
+		"@typescript-eslint/parser": "^5.2.0",
+		"babel-plugin-const-enum": "^1.1.0",
+		"babel-plugin-transform-typescript-metadata": "^0.3.2",
+		"eslint": "^8.1.0",
+		"eslint-config-marine": "^9.0.6",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-import": "^2.25.2",
+		"eslint-plugin-prettier": "^4.0.0",
+		"husky": "^7.0.4",
+		"jest": "^27.3.1",
+		"prettier": "^2.4.1",
+		"rimraf": "^3.0.2",
+		"tsup": "^5.5.0",
+		"typescript": "^4.4.4"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
