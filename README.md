@@ -15,7 +15,6 @@ npm install @discordextend/interpreter
 yarn add @discordextend/interpreter
 pnpm add @discordextend/interpreter
 ```
-[Full code parsing](./test/interpreter.js)
 
 ## Links
 * [Discord-Extend Discord Server](https://discord.gg/AQwkmv7kA9)
