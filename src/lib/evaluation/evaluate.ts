@@ -11,20 +11,17 @@ export function evaluate(expression: ParserToken, environment: Environment): any
 		case TokenType.Boolean:
 			return expression.value;
 		case TokenType.Variable:
-			const variable = environment.get(expression.variable);
-			if (!expression.properties.length) return variable;
-			// TODO remove eval
-			// eslint-disable-next-line no-eval
-			return eval(
-				`variable.${expression.properties
-					.map(
-						(property, index) =>
-							`${property.name}${
-								property.args ? `(...expression.properties[${index}].args.map(arg => evaluate(arg, environment)))` : ""
-							}`
-					)
-					.join(".")}`
-			);
+			const originalVariable = environment.get(expression.variable);
+			if (!expression.properties.length) return originalVariable;
+			let variable = originalVariable;
+			for (const property of expression.properties) {
+				variable = variable[property.name];
+				if (property.args)
+					variable = variable.bind(originalVariable)(
+						...property.args.map((arg: ParserToken) => evaluate(arg, environment))
+					);
+			}
+			return variable;
 		case TokenType.Assign:
 			if (expression.left.type !== TokenType.Variable)
 				throw new Error(`Cannot assign to ${JSON.stringify(expression.left)}`);
@@ -47,10 +44,7 @@ export function evaluate(expression: ParserToken, environment: Environment): any
 			return val;
 		case TokenType.Call:
 			const func = evaluate(expression.func, environment);
-			return func(
-				null,
-				expression.args.map((argument: ParserToken) => evaluate(argument, environment))
-			);
+			return func(...expression.args.map((argument: ParserToken) => evaluate(argument, environment)));
 		default:
 			throw new Error(`I don't know how to evaluate ${(expression as Token).type}`);
 	}
