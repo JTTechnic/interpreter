@@ -1,6 +1,6 @@
 {
 	"name": "@discordextend/interpreter",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "An interpreter for discord-oversimplified",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
@@ -27,7 +27,7 @@
 		"lint:fix": "eslint --ext mjs,js,ts --fix",
 		"format": "prettier --write **/*.{ts,js,json,yml,yaml}",
 		"prepare": "husky install",
-		"prepublishOnly": "npm run build"
+		"changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
 	},
 	"repository": {
 		"type": "git",
@@ -54,6 +54,7 @@
 		"@typescript-eslint/parser": "^5.2.0",
 		"babel-plugin-const-enum": "^1.1.0",
 		"babel-plugin-transform-typescript-metadata": "^0.3.2",
+		"conventional-changelog-cli": "^2.1.1",
 		"eslint": "^8.1.0",
 		"eslint-config-marine": "^9.0.6",
 		"eslint-config-prettier": "^8.3.0",
