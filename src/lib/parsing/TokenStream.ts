@@ -6,7 +6,7 @@ export class TokenStream {
 	/**
 	 * The keywords of the interpreter
 	 */
-	private static readonly KEYWORDS = ["if", "else", "true", "false"];
+	private static readonly KEYWORDS = ["if", "else", "true", "false", "final"];
 
 	/**
 	 * The current token of this stream

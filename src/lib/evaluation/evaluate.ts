@@ -25,7 +25,11 @@ export function evaluate(expression: ParserToken, environment: Environment): any
 		case TokenType.Assign:
 			if (expression.left.type !== TokenType.Variable)
 				throw new Error(`Cannot assign to ${JSON.stringify(expression.left)}`);
-			return environment.set(expression.left.variable, evaluate(expression.right, environment));
+			const { variable: assignVariable } = expression.left;
+			const right = evaluate(expression.right, environment);
+			return expression.final
+				? environment.define(assignVariable, right, true)
+				: environment.set(assignVariable, right);
 		case TokenType.Binary:
 			return Operator.apply(
 				expression.operator,

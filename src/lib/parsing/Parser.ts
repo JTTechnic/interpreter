@@ -1,6 +1,15 @@
 import { TokenStream } from "./TokenStream";
 import { TokenType } from "../TokenType";
-import type { Token, CallToken, IfToken, ProgramToken, VariableToken, PropertyToken, ParserToken } from "../Token";
+import type {
+	Token,
+	CallToken,
+	IfToken,
+	ProgramToken,
+	VariableToken,
+	PropertyToken,
+	ParserToken,
+	AssignToken
+} from "../Token";
 
 export class Parser {
 	/**
@@ -112,6 +121,14 @@ export class Parser {
 			return;
 		}
 		this.input.error(`Expecting punctuation: "${keyword}"`);
+	}
+
+	private skipOperator(operator: string) {
+		if (this.isOperator(operator)) {
+			this.input.next();
+			return;
+		}
+		this.input.error(`Expecting operator: "${operator}"`);
 	}
 
 	/**
@@ -234,6 +251,19 @@ export class Parser {
 		};
 	}
 
+	private parseFinal(): AssignToken {
+		this.skipKeyword("final");
+		const variable = this.parseVariable();
+		this.skipOperator("=");
+		return {
+			type: TokenType.Assign,
+			operator: "=",
+			final: true,
+			left: variable,
+			right: this.parseExpression()
+		};
+	}
+
 	/**
 	 * @param expression The expression to use
 	 * @returns The parsed call
@@ -257,6 +287,12 @@ export class Parser {
 			if (this.isPunctuation("{")) return this.parseProgram();
 			if (this.isKeyword("if")) return this.parseIf();
 			if (this.isKeyword("true") || this.isKeyword("false")) return this.parseBoolean();
+			if (this.isKeyword("final")) {
+				console.log("FINAL");
+				const final = this.parseFinal();
+				console.log(final);
+				return final;
+			}
 			if (this.input.peek()?.type === TokenType.Variable) return this.parseVariable();
 			const token = this.input.next();
 			if ([TokenType.Number, TokenType.String].includes(token?.type as TokenType)) return token as ParserToken;

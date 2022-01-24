@@ -11,11 +11,20 @@ export type ParserToken =
 	| CallToken
 	| IfToken
 	| ProgramToken
-	| VariableToken;
+	| VariableToken
+	| AssignToken;
 
 export interface OperatorToken {
-	type: TokenType.Assign | TokenType.Binary;
+	type: TokenType.Binary;
 	operator: string;
+	left: ParserToken;
+	right: ParserToken;
+}
+
+export interface AssignToken {
+	type: TokenType.Assign;
+	operator: string;
+	final?: boolean;
 	left: ParserToken;
 	right: ParserToken;
 }
