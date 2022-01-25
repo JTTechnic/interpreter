@@ -287,12 +287,7 @@ export class Parser {
 			if (this.isPunctuation("{")) return this.parseProgram();
 			if (this.isKeyword("if")) return this.parseIf();
 			if (this.isKeyword("true") || this.isKeyword("false")) return this.parseBoolean();
-			if (this.isKeyword("final")) {
-				console.log("FINAL");
-				const final = this.parseFinal();
-				console.log(final);
-				return final;
-			}
+			if (this.isKeyword("final")) return this.parseFinal();
 			if (this.input.peek()?.type === TokenType.Variable) return this.parseVariable();
 			const token = this.input.next();
 			if ([TokenType.Number, TokenType.String].includes(token?.type as TokenType)) return token as ParserToken;
