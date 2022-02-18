@@ -6,12 +6,17 @@ export class TokenStream {
 	/**
 	 * The keywords of the interpreter
 	 */
-	private static readonly KEYWORDS = ["if", "else", "true", "false", "final"];
+	private static readonly KEYWORDS = ["if", "else", "true", "false", "final", "function", "return"];
 
 	/**
 	 * The current token of this stream
 	 */
 	private currentToken: Token | null = null;
+
+	/**
+	 * The previous token of this stream
+	 */
+	private previousToken: Token | null = null;
 
 	/**
 	 * Make a new token stream
@@ -217,6 +222,7 @@ export class TokenStream {
 	public next() {
 		const token = this.currentToken;
 		this.currentToken = null;
+		this.previousToken = token;
 		return token ?? this.readNext();
 	}
 
@@ -227,6 +233,10 @@ export class TokenStream {
 	public peek() {
 		this.currentToken ??= this.readNext();
 		return this.currentToken;
+	}
+
+	public peekLeft() {
+		return this.previousToken;
 	}
 
 	/**

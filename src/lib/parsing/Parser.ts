@@ -8,7 +8,9 @@ import type {
 	VariableToken,
 	PropertyToken,
 	ParserToken,
-	AssignToken
+	AssignToken,
+	FunctionToken,
+	ParameterToken
 } from "../Token";
 
 export class Parser {
@@ -37,18 +39,6 @@ export class Parser {
 	};
 
 	/**
-	 * Tokens that get used multiple times
-	 */
-	private static readonly TOKENS: {
-		FALSE: Token<TokenType.Boolean>;
-	} = {
-		FALSE: {
-			type: TokenType.Boolean,
-			value: false
-		}
-	};
-
-	/**
 	 * Make a new parser
 	 * @param input The token stream to use as input
 	 */
@@ -61,8 +51,8 @@ export class Parser {
 	 * @param character The character to check
 	 * @returns The token if it is a punctuation token, false otherwise
 	 */
-	private isPunctuation(character?: string) {
-		const token = this.input.peek();
+	private isPunctuation(character?: string, previous = false) {
+		const token = previous ? this.input.peekLeft() : this.input.peek();
 		return (
 			token &&
 			token.type === TokenType.Punctuation &&
@@ -76,8 +66,8 @@ export class Parser {
 	 * @param keyword The character to check
 	 * @returns The token if it is a keyword token, false otherwise
 	 */
-	private isKeyword(keyword: string) {
-		const token = this.input.peek();
+	private isKeyword(keyword: string, previous = false) {
+		const token = previous ? this.input.peekLeft() : this.input.peek();
 		return (
 			token &&
 			token.type === TokenType.Keyword &&
@@ -91,8 +81,8 @@ export class Parser {
 	 * @param operator The character to check
 	 * @returns The token if it is an operator token, false otherwise
 	 */
-	private isOperator(operator?: string) {
-		const token = this.input.peek();
+	private isOperator(operator?: string, previous = false) {
+		const token = previous ? this.input.peekLeft() : this.input.peek();
 		return (
 			token &&
 			token.type === TokenType.Operator &&
@@ -136,8 +126,10 @@ export class Parser {
 	/**
 	 * Throw an error about an unexpected token
 	 */
-	private unexpected() {
-		return this.input.error(`Unexpected token: ${JSON.stringify(this.input.peek())}`);
+	private unexpected(expected?: string) {
+		return this.input.error(
+			`Unexpected token: ${JSON.stringify(this.input.peek())} ${expected ? `expecting ${expected}` : ""}`
+		);
 	}
 
 	/**
@@ -176,7 +168,7 @@ export class Parser {
 		start: string,
 		stop: string,
 		seperator: string,
-		parser: (...args: any[]) => V,
+		parser: (...args: any[]) => { value: V; done?: boolean },
 		seperatorRequired = true
 	): V[] {
 		const values = [];
@@ -188,7 +180,9 @@ export class Parser {
 				first = false;
 			} else if (seperatorRequired || this.isPunctuation(seperator)) this.skipPunctuation(seperator);
 			if (this.isPunctuation(stop)) break;
-			values.push(parser());
+			const parsed = parser();
+			values.push(parsed.value);
+			if (parsed.done) break;
 		}
 		this.skipPunctuation(stop);
 		return values;
@@ -203,7 +197,7 @@ export class Parser {
 		return {
 			type: TokenType.Call,
 			func,
-			args: this.delimited("(", ")", ",", () => this.parseExpression())
+			args: this.delimited("(", ")", ",", () => ({ value: this.parseExpression() }))
 		};
 	}
 
@@ -272,7 +266,7 @@ export class Parser {
 	 */
 	private maybeCall(expression: (...args: any[]) => ParserToken) {
 		const newExpression = expression();
-		return this.isPunctuation("(") ? this.parseCall(newExpression) : newExpression;
+		return !this.isPunctuation(";", true) && this.isPunctuation("(") ? this.parseCall(newExpression) : newExpression;
 	}
 
 	/**
@@ -290,6 +284,7 @@ export class Parser {
 			if (this.isKeyword("if")) return this.parseIf();
 			if (this.isKeyword("true") || this.isKeyword("false")) return this.parseBoolean();
 			if (this.isKeyword("final")) return this.parseFinal();
+			if (this.isKeyword("function")) return this.parseFunction();
 			if (this.input.peek()?.type === TokenType.Variable) return this.parseVariable();
 			const token = this.input.next();
 			if ([TokenType.Number, TokenType.String].includes(token?.type as TokenType)) return token as ParserToken;
@@ -313,23 +308,34 @@ export class Parser {
 		};
 	}
 
+	private skipWhile(func: () => boolean) {
+		while (!this.input.eof() && func()) this.input.next();
+	}
+
 	/**
 	 * Parse a program
+	 * @param allowReturn Wether the return keyword is allowed
 	 * @returns The parsed program
 	 */
-	private parseProgram(): ParserToken {
+	private parseProgram(allowReturn = false): ProgramToken {
 		const program = this.delimited(
 			"{",
 			"}",
 			";",
 			() => {
 				if (this.isPunctuation(";")) this.input.next();
-				return this.parseExpression();
+				if (this.isKeyword("return")) {
+					if (!allowReturn) return this.unexpected();
+					this.input.next();
+					const expression = this.parseExpression();
+					this.skipPunctuation(";");
+					this.skipWhile(() => !this.isPunctuation("}"));
+					return { value: expression, done: true };
+				}
+				return { value: this.parseExpression() };
 			},
 			false
 		);
-		if (program.length === 0) return Parser.TOKENS.FALSE;
-		if (program.length === 1) return program[0];
 		return {
 			type: TokenType.Program,
 			program
@@ -368,14 +374,49 @@ export class Parser {
 	 */
 	private parseProperty(): PropertyToken {
 		const token = this.input.next();
-		if (token?.type !== TokenType.Variable) this.unexpected();
+		if (token?.type !== TokenType.Variable) this.unexpected("property");
 		const property: PropertyToken = {
 			type: TokenType.Property,
 			name: token?.value as string
 		};
 		if (this.isPunctuation("(")) {
-			property.args = this.delimited("(", ")", ",", () => this.parseExpression());
+			property.args = this.delimited("(", ")", ",", () => ({ value: this.parseExpression() }));
 		}
 		return property;
+	}
+
+	/**
+	 * Parse a parameter
+	 * @returns The parsed parameter
+	 */
+	private parseParameter(): ParameterToken {
+		const token = this.input.next();
+		if (token?.type !== TokenType.Variable) this.unexpected("parameter");
+		return {
+			type: TokenType.Parameter,
+			name: token?.value as string
+		};
+	}
+
+	/**
+	 * Parse a function
+	 * @returns The parsed function
+	 */
+	private parseFunction(): FunctionToken {
+		this.skipKeyword("function");
+		const name = (
+			this.input.peek()?.type === TokenType.Variable ? this.input.next() : null
+		) as Token<TokenType.Variable> | null;
+		if (name === null && !this.isPunctuation("(")) this.unexpected();
+		const parameters = this.delimited("(", ")", ",", () => ({ value: this.parseParameter() }));
+		this.skipPunctuation(":");
+		const program = this.isPunctuation("{") ? this.parseProgram(true) : this.parseExpression();
+		if (program.type !== TokenType.Program) this.skipPunctuation(";");
+		return {
+			type: TokenType.Function,
+			name: name?.value ?? null,
+			parameters,
+			program: program
+		};
 	}
 }

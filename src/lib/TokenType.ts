@@ -12,7 +12,9 @@ export enum TokenType {
 	Assign,
 	Binary,
 	Property,
-	ElseIf
+	ElseIf,
+	Function,
+	Parameter
 }
 
 export type TokenTypes = [boolean, string, string, string, string, number, string];

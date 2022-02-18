@@ -12,7 +12,8 @@ export type ParserToken =
 	| IfToken
 	| ProgramToken
 	| VariableToken
-	| AssignToken;
+	| AssignToken
+	| FunctionToken;
 
 export interface OperatorToken {
 	type: TokenType.Binary;
@@ -64,4 +65,16 @@ export interface PropertyToken {
 	type: TokenType.Property;
 	name: string;
 	args?: any[];
+}
+
+export interface FunctionToken {
+	type: TokenType.Function;
+	name: string | null;
+	parameters: ParameterToken[];
+	program: ParserToken;
+}
+
+export interface ParameterToken {
+	type: TokenType.Parameter;
+	name: string;
 }
