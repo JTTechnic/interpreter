@@ -1,4 +1,4 @@
-import { Config } from "@jest/types";
+import type { Config } from "@jest/types";
 
 export default (): Config.InitialOptions => ({
 	testMatch: ["**/+(*.)+(spec|test).+(ts|js)?(x)"],
