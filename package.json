@@ -1,7 +1,7 @@
 {
-	"name": "@discordextend/interpreter",
-	"version": "1.1.0",
-	"description": "An interpreter for discord-oversimplified",
+	"name": "@hammerlang/interpreter",
+	"version": "1.0.0",
+	"description": "The interpreter of the hammer language ",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"typings": "./dist/index.d.ts",
@@ -11,7 +11,7 @@
 	},
 	"directories": {
 		"lib": "src",
-		"test": "__tests__"
+		"test": "test"
 	},
 	"files": [
 		"dist"
@@ -31,14 +31,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/discordextend/interpreter.git"
+		"url": "git+https://github.com/hammer-lang/interpreter.git"
 	},
 	"author": "Jaron Zijlstra",
 	"license": "Apache-2.0",
 	"bugs": {
-		"url": "https://github.com/discordextend/interpreter/issues"
+		"url": "https://github.com/hammer-lang/interpreter/issues"
 	},
-	"homepage": "https://github.com/discordextend/interpreter#readme",
+	"homepage": "https://github.com/hammer-lang/interpreter#readme",
 	"dependencies": {
 		"tslib": "^2.3.1"
 	},

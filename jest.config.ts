@@ -1,7 +1,6 @@
-/**
- * @type {import("@jest/types").Config.InitialOptions}
- */
-module.exports = {
+import { Config } from "@jest/types";
+
+export default (): Config.InitialOptions => ({
 	testMatch: ["**/+(*.)+(spec|test).+(ts|js)?(x)"],
 	testEnvironment: "node",
 	collectCoverage: true,
@@ -16,4 +15,4 @@ module.exports = {
 		}
 	},
 	coveragePathIgnorePatterns: ["/node_modules/"]
-};
+});
