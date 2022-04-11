@@ -24,7 +24,7 @@ export class InputStream {
 	 * Get the next character from the input
 	 * @returns The next character
 	 */
-	public next() {
+	public next(): string  {
 		const character = this.input.charAt(this.position++);
 		if (character === "\n") {
 			this.line++;
@@ -40,7 +40,7 @@ export class InputStream {
 	 * @param amount How much characters to peek
 	 * @returns The peeked characters
 	 */
-	public peek(amount = 1) {
+	public peek(amount = 1): string  {
 		if (typeof amount !== "number") throw new TypeError("Peek amount should be a number");
 		return this.input.substring(this.position, this.position + amount);
 	}
@@ -49,7 +49,7 @@ export class InputStream {
 	 * Check if the end of the file has been reached
 	 * @returns Wether the end of the file has been reached
 	 */
-	public eof() {
+	public eof(): boolean  {
 		return this.peek() === "";
 	}
 
