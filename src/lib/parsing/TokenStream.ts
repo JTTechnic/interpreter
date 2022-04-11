@@ -243,7 +243,7 @@ export class TokenStream {
 	 * Check if the end of the file has been reached
 	 * @returns Wether the end of the file has been reached
 	 */
-	public eof(): boolean  {
+	public eof(): boolean {
 		return this.peek() === null;
 	}
 
@@ -252,7 +252,7 @@ export class TokenStream {
 	 * @param message The message for the error to throw
 	 * @throws {Error} The error that got thrown
 	 */
-	public error(message: string): never  {
+	public error(message: string): never {
 		return this.input.error(message);
 	}
 }
