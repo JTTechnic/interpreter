@@ -8,6 +8,10 @@ describe("Operators test", () => {
 		return evaluate(parse(code), env);
 	}
 
+	function evalAssign(start: number, code: string) {
+		return evalParse(`a = ${start};${code}`);
+	}
+
 	test("errors", () => {
 		expect(() => evalParse("1 + false")).toThrow();
 		expect(() => evalParse("5 / 0")).toThrow();
@@ -15,22 +19,10 @@ describe("Operators test", () => {
 
 	test("addition", () => {
 		expect(evalParse("1 + 1")).toBe(1 + 1);
-		expect(
-			evalParse(`
-				a = 1;
-				a += 1;
-			`)
-		).toBe(1 + 1);
 	});
 
 	test("subtraction", () => {
 		expect(evalParse("1 - 1")).toBe(1 - 1);
-		expect(
-			evalParse(`
-				a = 1;
-				a -= 1;
-			`)
-		).toBe(1 - 1);
 	});
 
 	test("multiplication", () => {
@@ -66,5 +58,15 @@ describe("Operators test", () => {
 
 	test("exponentiation", () => {
 		expect(evalParse("2 ** 3")).toBe(2 ** 3);
+	});
+
+	test("assignment", () => {
+		expect(evalParse("a = 1")).toBe(1);
+		expect(evalAssign(1, "a += 1")).toBe(1 + 1);
+		expect(evalAssign(1, "a -= 1")).toBe(1 - 1);
+		expect(evalAssign(1, "a *= 2")).toBe(1 * 2);
+		expect(evalAssign(1, "a /= 2")).toBe(1 / 2);
+		expect(evalAssign(1, "a %= 2")).toBe(1 % 2);
+		expect(evalAssign(1, "a **= 2")).toBe(1 ** 2);
 	});
 });

@@ -63,6 +63,14 @@ export class Operator {
 				return (left += right);
 			case "-=":
 				return (left -= right);
+			case "*=":
+				return (left *= right);
+			case "/=":
+				return (left /= right);
+			case "%=":
+				return (left %= right);
+			case "**=":
+				return (left **= right);
 			case "**":
 				return left ** right;
 			default:
