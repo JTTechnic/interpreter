@@ -63,4 +63,8 @@ describe("Operators test", () => {
 		expect(evalParse("1 == 2")).toBe(1 == 2);
 		expect(evalParse("1 != 2")).toBe(1 != 2);
 	});
+
+	test("exponentiation", () => {
+		expect(evalParse("2 ** 3")).toBe(2 ** 3);
+	});
 });
